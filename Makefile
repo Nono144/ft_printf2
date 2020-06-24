@@ -4,23 +4,31 @@ LIBFT_A =	libft.a
 COMP =		gcc -Wall -Werror -Wextra $(PRINTF_H) $(LIBFT_H) -c -o
 
 PRINTF_H =	-I includes/
-LIBFT_H = 	-I srcs/libft/includes
+LIBFT_H = 	-I libft/includes
 
 OBJ_DIR =	obj/
 SRC_DIR =	srcs/
-LIB_DIR =	srcs/libft/
+LIB_DIR =	libft/
 
 CFILE =		ft_printf.c \
 			ft_initialize.c \
 			ft_parse.c \
+			ft_parse_flags.c \
+			ft_parse_width.c \
+			ft_parse_precision.c \
+			ft_parse_size.c \
+			ft_parse_type.c \
 			ft_display.c \
 			ft_display_d.c \
-			ft_display_c.c \
 			ft_display_s.c \
 			ft_display_u.c \
 			ft_display_x.c \
 			ft_display_p.c \
-			ft_display_gap_zeros.c \
+			ft_display_o.c \
+			ft_display_ws.c \
+			ft_display_c.c \
+			ft_display_gz.c \
+			ft_display_oth.c \
 			ft_utils.c \
 			ft_itoa_n.c \
 			ft_get_arg.c
@@ -54,6 +62,7 @@ $(OBJ): $(CFIND)
 $(OFILE):
 		@echo Create: $(@:obj/%=%)
 		@$(COMP) $(OBJ_DIR)$@ $(SRC_DIR)$(@:%.o=%.c)
+bonus:	all
 
 clean:
 		@/bin/rm -rf $(OBJ_DIR)

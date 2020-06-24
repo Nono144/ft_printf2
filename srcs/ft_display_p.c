@@ -1,35 +1,42 @@
 #include "ft_printf.h"
-#include "libft.h"
 
-/*static intmax_t		ft_get_num(t_str *str)
+static int	ft_load_pound(char *s_num, t_str *str)
 {
-	unsigned long num;
+	if (s_num[0] == '\0' && str->precision < 0)
+		return (3);
+	return (2);
+}
 
-	num = (unsigned long)(va_arg(str->args, unsigned long));
-	return (num);
-}*/
-
-size_t	ft_display_p(t_str *str)
+static void	ft_display_before(t_str *str, size_t len, int l_pound)
 {
-	unsigned long long num;
-	char *s_num;
-	size_t	len;
-	char l_prefix;
-
-	l_prefix = 2;
-	if ((num = ft_get_unum(str)) == 0)
+	if (!ft_is_flag(str, '-') && ft_is_flag(str, '0') && str->precision < 0)
 	{
-		s_num = "(nil)";
-		l_prefix = 0;
+		ft_write(1, "0x0", l_pound, str);
+		ft_display_z(ft_max(str->precision, len), str->width - l_pound, str);
+	}
+	else if (!ft_is_flag(str, '-'))
+	{
+		ft_display_g(ft_max(str->precision, len), str->width - l_pound, str);
+		ft_write(1, "0x0", l_pound, str);
 	}
 	else
-		s_num = ft_itoa_hex(num, 0);
-	len = ft_strlen(s_num);
-	if (!ft_is_flag(str, '-'))
-		ft_display_g(str, len + l_prefix);
-	ft_write(1, "0x", l_prefix, str);
+		ft_write(1, "0x0", l_pound, str);
+	ft_display_z(len, str->precision, str);
+}
+
+void		ft_display_p(t_str *str)
+{
+	char 		*s_num;
+	size_t		len;
+	int 		l_pound;
+
+	ft_get_unum(str);
+	s_num = ft_itoa_hex(str, 0);
+	len  = ft_strlen(s_num);
+	l_pound = ft_load_pound(s_num, str);
+	ft_display_before(str, len, l_pound);
 	ft_write(1, s_num, len, str);
 	if (ft_is_flag(str, '-'))
-		ft_display_g(str, len + l_prefix);
-	return (len);
+		ft_display_g(ft_max(str->precision, len), str->width - l_pound, str);
+	free(s_num);
 }

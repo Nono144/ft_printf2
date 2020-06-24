@@ -1,67 +1,95 @@
 #include "ft_printf.h"
 
-static 	int	ft_get_len(unsigned long long num)
+static 	int	ft_get_len(uintmax_t num, char type)
 {
 	int i;
+	int base;
 
 	i = 0;
+	if (type == 'o')
+		base = 8;
+	else if (type == 'h')
+		base = 16;
+	else
+		base = 10;
 	while (num != 0)
 	{
-		num /= 10;
+		num /= base;
 		i++;
 	}
 	return (i);
 }
 
-static int	ft_get_len_hex(unsigned long long num)
+char	*ft_itoa_hex(t_str *str, int maj)
 {
-	size_t len;
-
-	len = 0;
-	while (num)
-	{
-		num /= 16;
-		len++;
-	}
-	return (len);
-}
-
-char	*ft_itoa_hex(unsigned long long num, int maj)
-{
-	unsigned long long 	mod;
 	size_t 			len;
-	char		*str;
+	int 			mod;
+	char			*s;
 
-	len = ft_get_len_hex(num);
-	if ((str = malloc((len + 1) * sizeof(char))) == NULL)
+	len = ft_get_len(str->unum, 'h');
+	if ((s = malloc((len + 1) * sizeof(char))) == NULL)
 		return (NULL);
-	str[len--] = '\0';	
-	while (num != 0)
+	s[len--] = '\0';	
+	while (str->unum != 0)
 	{
-		mod = num % 16;
+		mod = str->unum % 16;
 		if (mod <= 9)
-			str[(len--)] = '0' + mod;
+			s[(len--)] = '0' + mod;
 		else
-			str[(len--)] = 'a'+ maj * ('A' - 'a') + mod - 10;
-		num /= 16;
+			s[(len--)] = 'a' - 10 + maj * ('A' - 'a') + mod;
+		str->unum /= 16;
 	}
-	return (str);
+	return (s);
 }
 
-
-char	*ft_itoa_n(unsigned long long num)
+char	*ft_itoa_o(t_str *str)
 {
-	size_t	len;
-	char *str;
+	size_t 			len;
+	char			*s;
 
-	len = ft_get_len(num);
-	if ((str = malloc((len + 1) * sizeof(char))) == NULL)
+	len = ft_get_len(str->unum, 'o');
+	if ((s = malloc((len + 1) * sizeof(char))) == NULL)
 		return (NULL);
-	str[len--] = '\0';
-	while (num != 0)
+	s[len--] = '\0';
+	while (str->unum != 0)
 	{
-		str[len--] = (num % 10) + '0';
-		num /= 10;
+		s[(len--)] = '0' + str->unum % 8;
+		str->unum /= 8;
 	}
-	return (str);
+	return (s);
+}
+
+char	*ft_itoa_u(t_str *str)
+{
+	unsigned int 	len;
+	char		*s;
+
+	len = ft_get_len(str->unum, 'd');
+	if ((s = malloc((len + 1) * sizeof(char))) == NULL)
+		return (NULL);
+	s[len--] = '\0';
+	while (str->unum != 0)
+	{
+		s[len--] = (str->unum % 10) + '0';
+		str->unum /= 10;
+	}
+	return (s);
+}
+
+char	*ft_itoa_n(t_str *str)
+{
+	unsigned int 	len;
+	char *s;
+
+	str->unum = (str->num < 0 ? -str->num : str->num);
+	len = ft_get_len(str->unum, 'd');
+	if ((s = malloc((len + 1) * sizeof(char))) == NULL)
+		return (NULL);
+	s[len--] = '\0';
+	while (str->unum != 0)
+	{
+		s[len--] = (str->unum % 10) + '0';
+		str->unum /= 10;
+	}
+	return (s);
 }

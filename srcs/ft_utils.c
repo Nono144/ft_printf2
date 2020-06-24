@@ -41,21 +41,8 @@ int		ft_is_flag(t_str *str, char c)
 	return (0);
 }
 
-void		ft_write(int fd, char *buf, size_t len, t_str *str)
+void		ft_write(int fd, const void *buf, size_t len, t_str *str)
 {
 	write(fd, buf, len);
 	str->len += (int)len;
-}
-
-void		ft_erase_flag(t_str *str, char flag)
-{
-	int i;
-
-	i = 0;
-	while (str->flags[i])
-	{
-		if (str->flags[i] == flag)
-			str->flags[i] = 1;
-		i++;	
-	}
 }
